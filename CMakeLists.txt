@@ -106,9 +106,9 @@ add_executable(PixelAnnotationTool MACOSX_BUNDLE WIN32
 target_link_libraries(PixelAnnotationTool Qt5::Gui Qt5::Widgets ${OpenCV_LIBS})	
 
 set(OpenCV_BIN ${OpenCV_LIB_PATH}/../bin)
-set(NAME_RELEASE PixelAnnotationTool_${ARCH_TYPE}_v${PIXEL_ANNOTATION_VERSION})
-set(DIR_NAME_RELEASE ${CMAKE_CURRENT_BINARY_DIR}/${NAME_RELEASE})
-set_target_properties( PixelAnnotationTool PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${DIR_NAME_RELEASE})	
+#set(NAME_RELEASE PixelAnnotationTool_${ARCH_TYPE}_v${PIXEL_ANNOTATION_VERSION})
+#set(DIR_NAME_RELEASE ${CMAKE_CURRENT_BINARY_DIR}/${NAME_RELEASE})
+#set_target_properties( PixelAnnotationTool PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${DIR_NAME_RELEASE})
           
 string(REGEX REPLACE "\\." "" CV_VERSION_NUMBER ${OpenCV_VERSION})
 if( "${OpenCV_LIBS}" MATCHES "opencv_world" )
