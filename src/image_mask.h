@@ -20,10 +20,11 @@ struct ImageMask {
 	void drawFillCircle(int x, int y, int pen_size, ColorMask cm);
 	void drawPixel(int x, int y, ColorMask cm);
 	void updateColor(const Id2Labels & labels);
-    void floodFill(int x, int y, ColorMask cm);
+    void floodFill(int x, int y, ColorMask cm, Name2Labels* labels);
 private:
-    void floodFillRaw(int x, int y, QColor color, QImage &image);
+    void floodFillRaw(int x, int y, QColor color, QImage &image, std::vector<QColor> &compare_colors);
     bool checkPointColor(QImage &image, QPoint point, QColor color);
+    bool checkPointColor(QImage &image, QPoint point, std::vector<QColor> &compare_colors);
 };
 
 #endif

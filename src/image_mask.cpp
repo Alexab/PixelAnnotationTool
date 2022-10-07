@@ -69,7 +69,20 @@ bool ImageMask::checkPointColor(QImage &image, QPoint point, QColor color)
     return true;
 }
 
-void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
+bool ImageMask::checkPointColor(QImage &image, QPoint point, std::vector<QColor> &compare_colors)
+{
+    QRgb actual=image.pixel(point);
+    for(auto& color : compare_colors)
+    {
+     unsigned int curr_color=actual & RGB_MASK;
+     unsigned int check_color = color.rgb() & RGB_MASK;
+     if(curr_color == check_color)
+      return false;
+    }
+    return true;
+}
+
+void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image, std::vector<QColor> &compare_colors)
 {
     QPen pen(QBrush(color), 1.0);
        QPainter painter(&image);
@@ -88,7 +101,7 @@ void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
            image.setPixelColor(newPoint, color);
 
                   QPoint left((newPoint.x()-1), newPoint.y());
-                  if(left.x() >=0 && left.x() < image.width() && checkPointColor(image, left, color))
+                  if(left.x() >=0 && left.x() < image.width() && checkPointColor(image, left, compare_colors))
                   {
                       pixels.push(left);
                     //  painter.drawPoint(left);
@@ -96,7 +109,7 @@ void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
                   }
 
                   QPoint right((newPoint.x()+1), newPoint.y());
-                  if(right.x() >= 0 && right.x() < image.width() && checkPointColor(image, right, color))
+                  if(right.x() >= 0 && right.x() < image.width() && checkPointColor(image, right, compare_colors))
                   {
                       pixels.push(right);
                    //   painter.drawPoint(right);
@@ -104,7 +117,7 @@ void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
                   }
 
                   QPoint up((newPoint.x()), (newPoint.y()-1));
-                  if(up.y() >= 0 && up.y() < image.height() && checkPointColor(image, up, color))
+                  if(up.y() >= 0 && up.y() < image.height() && checkPointColor(image, up, compare_colors))
                   {
                       pixels.push(up);
                    //   painter.drawPoint(up);
@@ -112,7 +125,7 @@ void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
                   }
 
                   QPoint down((newPoint.x()), (newPoint.y()+1));
-                  if(down.y() >= 0 && down.y() < image.height() && checkPointColor(image, down, color))
+                  if(down.y() >= 0 && down.y() < image.height() && checkPointColor(image, down, compare_colors))
                   {
                       pixels.push(down);
                   //    painter.drawPoint(down);
@@ -124,8 +137,43 @@ void ImageMask::floodFillRaw(int x, int y, QColor color, QImage &image)
 
 }
 
-void ImageMask::floodFill(int x, int y, ColorMask cm)
+void ImageMask::floodFill(int x, int y, ColorMask cm, Name2Labels* labels)
 {
- floodFillRaw(x, y, cm.id, id);
- floodFillRaw(x, y, cm.color, color);
+ std::vector<QColor> compare_colors;
+ int unlabeled_id=0;
+ if(labels)
+ {
+  foreach ( const auto& label_key, labels->keys() )
+  {
+   const LabelInfo& label_info=(*labels)[label_key];
+   unsigned int curr_color=label_info.color.rgb() & RGB_MASK;
+   unsigned int check_color = 0x00000000;
+   if(curr_color == check_color)
+   {
+    unlabeled_id = label_info.id;
+    continue;
+   }
+   compare_colors.push_back(label_info.color);
+  }
+ }
+ else
+  compare_colors.push_back(cm.color);
+ floodFillRaw(x, y, cm.color, color, compare_colors);
+
+
+ compare_colors.clear();
+ if(labels)
+ {
+  foreach ( const auto& label_key, labels->keys() )
+  {
+   const LabelInfo& label_info=(*labels)[label_key];
+   if(label_info.id == unlabeled_id)
+       continue;
+
+   compare_colors.push_back(QColor(label_info.id, label_info.id, label_info.id));
+  }
+ }
+ else
+  compare_colors.push_back(cm.id);
+ floodFillRaw(x, y, cm.id, id, compare_colors);
 }

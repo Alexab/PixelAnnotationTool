@@ -186,6 +186,11 @@ void ImageCanvas::setSizePen(int pen_size) {
 	_pen_size = pen_size;
 }
 
+void ImageCanvas::setLabels(Name2Labels &labels)
+{
+ _labels = labels;
+}
+
 
 void ImageCanvas::mouseReleaseEvent(QMouseEvent * e) {
 
@@ -253,7 +258,7 @@ void ImageCanvas::mousePressEvent(QMouseEvent * e) {
 
          int scaled_x = (x + 0.5) / _scale ;
          int scaled_y = (y + 0.5) / _scale ;
-         _mask.floodFill(scaled_x, scaled_y, _color);
+         _mask.floodFill(scaled_x, scaled_y, _color, &_labels);
          repaint();
         }
         else

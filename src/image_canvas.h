@@ -35,6 +35,7 @@ public:
 	QImage getImage() const { return _image; }
 
 	void setWatershedMask(QImage watershed);
+    void setLabels(Name2Labels      &labels);
 	void refresh();
 	void updateMaskColor(const Id2Labels & labels) { _mask.updateColor(labels); }
 	void loadImage(const QString &file);
@@ -118,6 +119,8 @@ private:
     bool             _button_is_pressed;
     bool             _carry_activated = false;
     QPoint           _global_mouse_pos = QPoint(0, 0);
+    Name2Labels      _labels       ;
+
 };
 
 

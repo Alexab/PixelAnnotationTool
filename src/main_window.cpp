@@ -412,6 +412,7 @@ int MainWindow::getImageCanvas(QString name, ImageCanvas * ic) {
 	QString iDir = currentDir();
 	QString filepath(iDir + "/" + name);
 	ic->loadImage(filepath);
+    ic->setLabels(labels);
     int index = tabWidget->addTab(ic->getScrollParent(), name);
     tabWidget->widget(index)->setFocus(Qt::ActiveWindowFocusReason);
 	return index;
