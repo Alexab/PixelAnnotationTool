@@ -247,6 +247,7 @@ void ImageCanvas::mousePressEvent(QMouseEvent * e) {
         else
         if(Qt::ControlModifier == e->modifiers())
         {
+         addUndo();
          int x=_local_mouse_pos.x();
          int y=_local_mouse_pos.y();
 
