@@ -415,6 +415,7 @@ void ImageCanvas::wheelEvent(QWheelEvent *event) {
         _scroll_parent->verticalScrollBar()->setEnabled(false);
         scaleCanvas(delta);
         event->ignore();
+        _scroll_parent->verticalScrollBar()->setEnabled(true);
 
     } else {
 
