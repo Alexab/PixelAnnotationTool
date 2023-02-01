@@ -88,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1511</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -107,6 +107,7 @@
      <string>Tool</string>
     </property>
     <addaction name="actionClear"/>
+    <addaction name="actionPreprocess_image"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -362,6 +363,14 @@
   <action name="actionOpen_jsq">
    <property name="text">
     <string>Open JSQ</string>
+   </property>
+  </action>
+  <action name="actionPreprocess_image">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Preprocess image</string>
    </property>
   </action>
  </widget>

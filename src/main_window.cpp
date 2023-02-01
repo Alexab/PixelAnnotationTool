@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 {
 	setupUi(this);
 
+    preprocess_image = false;
+
 	list_label->setSpacing(1);
     image_canvas = nullptr;
 	save_action = new QAction(tr("&Save current image"), this);
@@ -402,16 +404,20 @@ ImageCanvas * MainWindow::getImageCanvas(int index) {
 }
 
 int MainWindow::getImageCanvas(QString name, ImageCanvas * ic) {
+    ic = nullptr;
     for (short i = 0; i < tabWidget->count(); ++i) {
 		if (tabWidget->tabText(i).startsWith(name) ) {
             ic = getImageCanvas(i);
-			return i;
+//			return i;
 		}
 	}
-	ic = newImageCanvas();
+    if(ic == nullptr)
+    {
+     ic = newImageCanvas();
+    }
 	QString iDir = currentDir();
 	QString filepath(iDir + "/" + name);
-	ic->loadImage(filepath);
+    ic->loadImage(filepath, preprocess_image);
     ic->setLabels(labels);
     int index = tabWidget->addTab(ic->getScrollParent(), name);
     tabWidget->widget(index)->setFocus(Qt::ActiveWindowFocusReason);
@@ -602,3 +608,22 @@ void MainWindow::on_actionAbout_triggered() {
 	d->setModal(true);
 	d->show();
 }
+
+void MainWindow::on_actionPreprocess_image_triggered()
+{
+
+}
+
+
+void MainWindow::on_actionPreprocess_image_checkableChanged(bool checkable)
+{
+
+}
+
+
+void MainWindow::on_actionPreprocess_image_toggled(bool arg1)
+{
+    preprocess_image = arg1;
+    treeWidgetClicked();
+}
+

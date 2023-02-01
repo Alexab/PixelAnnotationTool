@@ -27,7 +27,7 @@
 
 constexpr ushort AUTOSAVE_TIME_SECONDS = 180;
 
-const QString VERSION = "v1.3beta";
+const QString VERSION = "v1.4.2beta";
 
 class MainWindow : public QMainWindow, public Ui::MainWindow {
     Q_OBJECT
@@ -66,6 +66,8 @@ public:
 
     QString          curr_open_dir;
 
+    bool preprocess_image;
+
 public:
 	QString currentDir() const;
 	QString currentFile() const;
@@ -96,6 +98,10 @@ public slots:
 	void updateConnect(int index);
     void treeWidgetClicked();
 
+private slots:
+    void on_actionPreprocess_image_triggered();
+    void on_actionPreprocess_image_checkableChanged(bool checkable);
+    void on_actionPreprocess_image_toggled(bool arg1);
 };
 
 #endif

@@ -53,7 +53,7 @@ void ImageCanvas::_initPixmap() {
 }
 
 #include <iostream>
-void ImageCanvas::loadImage(const QString &filename) {
+void ImageCanvas::loadImage(const QString &filename, bool preprocess) {
 	if (!_image.isNull() )
 		saveMask();
 
@@ -61,7 +61,54 @@ void ImageCanvas::loadImage(const QString &filename) {
 	QFileInfo file(_img_file);
 	if (!file.exists()) return;
 
- 	_image = mat2QImage(cv::imread(_img_file.toLocal8Bit().toStdString()));
+    _raw_image = cv::imread(_img_file.toLocal8Bit().toStdString());
+    if(preprocess)
+    {
+/*
+        //>>> Gamma correction
+        cv::Mat new_image = cv::Mat::zeros(_raw_image.size(), _raw_image.type());
+        double alpha = 2.2;
+        int beta = 1.0;
+
+        for (int y = 0; y < _raw_image.rows; y++) {
+            for (int x = 0; x < _raw_image.cols; x++) {
+                for (int c = 0; c < _raw_image.channels(); c++) {
+                    new_image.at<cv::Vec3b>(y, x)[c] =
+                        cv::saturate_cast<uchar>(alpha*_raw_image.at<cv::Vec3b>(y, x)[c] + beta);
+                }
+            }
+        }
+
+        _preprocessed_image = new_image;
+*/
+/*        cv::Mat yuv_image, eq_image;
+        cv::cvtColor(_raw_image, yuv_image, cv::COLOR_BGR2YUV);
+        cv::equalizeHist(yuv_image,eq_image);
+        cv::cvtColor(eq_image, _preprocessed_image, cv::COLOR_YUV2BGR);
+*/
+        cv::Mat lab_image;
+        cv::cvtColor(_raw_image, lab_image, cv::COLOR_BGR2Lab);
+
+        // Extract the L channel
+        std::vector<cv::Mat> lab_planes(3);
+        cv::split(lab_image, lab_planes);  // now we have the L image in lab_planes[0]
+
+        // apply the CLAHE algorithm to the L channel
+        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+        clahe->setClipLimit(4);
+        cv::Mat dst;
+        clahe->apply(lab_planes[0], dst);
+
+        // Merge the the color planes back into an Lab image
+        dst.copyTo(lab_planes[0]);
+        cv::merge(lab_planes, lab_image);
+
+       // convert back to RGB
+       cv::cvtColor(lab_image, _preprocessed_image, cv::COLOR_Lab2BGR);
+    }
+    else
+        _preprocessed_image = _raw_image;
+    _image = mat2QImage(_preprocessed_image);
 	
     _mask_file = file.dir().absolutePath()+ "/" + file.baseName() + "_color_mask.png";
 

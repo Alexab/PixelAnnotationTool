@@ -38,7 +38,7 @@ public:
     void setLabels(Name2Labels      &labels);
 	void refresh();
 	void updateMaskColor(const Id2Labels & labels) { _mask.updateColor(labels); }
-	void loadImage(const QString &file);
+    void loadImage(const QString &file, bool preprocess);
 	QScrollArea * getScrollParent() const { return _scroll_parent; }
     bool isNotSaved() const { return !_is_saved; }
 
@@ -120,6 +120,8 @@ private:
     bool             _carry_activated = false;
     QPoint           _global_mouse_pos = QPoint(0, 0);
     Name2Labels      _labels       ;
+
+    cv::Mat          _raw_image, _preprocessed_image;
 
 };
 
